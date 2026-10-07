@@ -1,0 +1,54 @@
+MIT License
+
+Copyright (c) 2024-2026 Zuma Deluxe Miyoo Mini Port Contributors
+Copyright (c) 2005-2007 PopCap Games, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+Third-Party Licenses & Attributions
+--------------------------------------------------------------------------------
+
+1. PopCap Games Framework:
+   Portions based on SexyAppFramework open source release.
+   Copyright (c) PopCap Games, Inc.
+
+2. libxmp-lite:
+   Copyright (c) 1996-2021 Claudio Matsuoka and Hipolito Carraro Jr.
+   Licensed under the LGPL v2.1.
+
+3. SDL2 (Simple DirectMedia Layer):
+   Copyright (c) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+   Licensed under the zlib License.
+
+4. UNMO3:
+   Copyright (c) 2001-2020 Un4seen Developments Ltd.
+   UNMO3 decoder tool is freeware by Un4seen Developments.
+
+--------------------------------------------------------------------------------
+DISCLAIMER & INTELLECTUAL PROPERTY NOTICE
+--------------------------------------------------------------------------------
+This project is an unofficial fan port created solely for educational, preservation,
+and research purposes. Zuma Deluxe is a registered trademark and intellectual
+property of PopCap Games, Inc. / Electronic Arts Inc.
+
+NO COPYRIGHTED GAME ASSETS (INCLUDING ARTWORK, GRAPHICS, SOUNDS, MUSIC MODULES,
+OR LEVEL DATA) ARE DISTRIBUTED AS PART OF THIS REPOSITORY. To play the game, users
+must provide their own legally acquired game files from an official release of
+Zuma Deluxe (Steam, CD-ROM, PopCap, or EA app).

@@ -1,0 +1,73 @@
+# Build output directories
+build/
+build-*/
+cmake-build-*/
+bin/*
+!bin/Zuma
+dist/
+output/
+unpacked_assets/
+
+# Object files & archives
+*.o
+*.obj
+*.a
+*.lib
+*.so.bak
+*.d
+*.idb
+*.pdb
+
+# Compiled game binaries
+Zuma
+Zuma.exe
+*.elf
+
+# Proprietary Game Assets (Never commit copyrighted PopCap assets)
+*.pak
+*.mo3
+*.it
+Zuma Deluxe/
+packaging/App/ZumaDeluxe/fonts/
+packaging/App/ZumaDeluxe/images/
+packaging/App/ZumaDeluxe/levels/
+packaging/App/ZumaDeluxe/music/
+packaging/App/ZumaDeluxe/properties/
+packaging/App/ZumaDeluxe/sounds/
+packaging/App/ZumaDeluxe/userdata/
+packaging/App/ZumaDeluxe/main.pak
+packaging/App/ZumaDeluxe/Zuma
+packaging/Roms/PORTS/Games/Zuma Deluxe/fonts/
+packaging/Roms/PORTS/Games/Zuma Deluxe/images/
+packaging/Roms/PORTS/Games/Zuma Deluxe/levels/
+packaging/Roms/PORTS/Games/Zuma Deluxe/music/
+packaging/Roms/PORTS/Games/Zuma Deluxe/properties/
+packaging/Roms/PORTS/Games/Zuma Deluxe/sounds/
+packaging/Roms/PORTS/Games/Zuma Deluxe/userdata/
+packaging/Roms/PORTS/Games/Zuma Deluxe/main.pak
+packaging/Roms/PORTS/Games/Zuma Deluxe/Zuma
+
+# Archives
+*.zip
+*.7z
+*.tar.gz
+*.rar
+
+# IDE & Editor files
+.vscode/
+.vs/
+.idea/
+*.user
+*.suo
+CMakeUserPresets.json
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class

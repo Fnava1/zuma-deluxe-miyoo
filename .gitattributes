@@ -1,0 +1,29 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code and text files
+*.cpp text
+*.c text
+*.h text
+*.inc text
+*.cmake text
+CMakeLists.txt text
+*.py text
+*.md text
+*.txt text
+*.json text
+
+# Shell scripts must always use LF line endings for Linux/OnionOS execution
+*.sh text eol=lf
+*.port text eol=lf
+
+# Windows batch files
+*.bat text eol=crlf
+
+# Binary files
+*.png binary
+*.ico binary
+*.so binary
+*.so.* binary
+*.exe binary
+Zuma binary

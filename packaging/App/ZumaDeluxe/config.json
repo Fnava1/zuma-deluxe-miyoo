@@ -1,0 +1,6 @@
+{
+  "label": "Zuma Deluxe",
+  "icon": "icon.png",
+  "launch": "launch.sh",
+  "description": "Zuma Deluxe native port for Miyoo Mini / Mini+ (OnionOS)"
+}

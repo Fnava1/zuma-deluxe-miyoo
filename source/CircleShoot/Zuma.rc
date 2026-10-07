@@ -1,0 +1,42 @@
+﻿#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+IDI_MAIN_ICON ICON "Zuma.ico"
+
+
+1 VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEOS 0x4
+FILETYPE 0x1
+{
+BLOCK "StringFileInfo"
+{
+	BLOCK "040904b0"
+	{
+		VALUE "FileDescription", "Zuma"
+		VALUE "FileVersion", "1, 0, 0, 0"
+		VALUE "InternalName", "Zuma"
+		VALUE "LegalCopyright", "Copyright (C) 2026"
+		VALUE "OriginalFilename", "Zuma.exe"
+		VALUE "ProductName", "Zuma Portable"
+		VALUE "ProductVersion", "1.0"
+	}
+}
+
+BLOCK "VarFileInfo"
+{
+	VALUE "Translation", 0x0409, 0x04B0  
+}
+}
+
