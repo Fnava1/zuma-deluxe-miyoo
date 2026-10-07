@@ -1,10 +1,11 @@
-# Zuma Deluxe — Miyoo Mini & Mini+ Port (OnionOS)
+# Zuma Deluxe — Miyoo Mini+ Port (OnionOS)
 
 [![Platform](https://img.shields.io/badge/Platform-Miyoo%20Mini%20%2F%20Plus-blue.svg)](https://onionui.github.io/)
 [![OS](https://img.shields.io/badge/OS-OnionOS-red.svg)](https://onionui.github.io/)
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+**ORIGINAL MIYOO USERS** THERE'S SOME UNEXPECTED BEHAVIOR ON THE ORIGINAL MIYOO, I RECOMMEND NOT TRYING THIS PORT UNTIL I SOLVED THE ISSUES. THANKS FOR UNDERSTANDING 
 
 > **IMPORTANT LEGAL NOTICE:** This repository does **NOT** contain any copyrighted game assets, audio files, textures, or level data. You must provide your own legally owned copy of **Zuma Deluxe for PC** (available on [Steam](https://store.steampowered.com/app/3330/Zuma_Deluxe/), EA App, or original CD-ROM) to play.
 
