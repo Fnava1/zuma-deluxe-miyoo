@@ -94,59 +94,37 @@ unmo3 -y "music/zuma.mo3" "music/zuma.it"
 
 ---
 
-## 4. MicroSD Card Directory Layouts
-
-OnionOS supports two standard ways of launching games. You can install either one, or both:
-
-### Option A: OnionOS App (`/mnt/SDCARD/App/ZumaDeluxe/`)
-Launches directly from the **Apps** menu on the OnionOS home screen.
-
-```
-SDCARD/
-└── App/
-    └── ZumaDeluxe/
-        ├── Zuma                     <- Native ARM binary
-        ├── launch.sh                <- Launcher script (must have +x permission)
-        ├── config.json              <- OnionOS App metadata
-        ├── icon.png                 <- Menu icon (32x32 or 48x48)
-        ├── main.pak                 <- Game asset container
-        ├── libs/
-        │   ├── libSDL2-2.0.so.0
-        │   ├── libSDL2.so
-        │   └── libneonarmmiyoo.so
-        ├── music/
-        │   └── zuma.it              <- Converted soundtrack
-        ├── userdata/                <- Folder for game saves (created automatically)
-        ├── fonts/                   <- (Optional if loose folders used instead of main.pak)
-        ├── images/
-        ├── levels/
-        ├── properties/
-        └── sounds/
-```
-
-### Option B: OnionOS Ports Collection (`/mnt/SDCARD/Roms/PORTS/`)
-Launches from the **Games -> Expert / Ports** menu.
-
+## 4. MicroSD Card Directory Layout
+ 
+OnionOS standard Ports format installs under `Roms/PORTS/`:
+ 
 ```
 SDCARD/
 └── Roms/
     └── PORTS/
-        ├── Zuma Deluxe.port         <- Port launcher script
+        ├── Imgs/
+        │   └── Zuma Deluxe.png          <- Menu boxart cover
         ├── Shortcuts/
         │   └── Puzzle games/
-        │       └── Zuma Deluxe.port <- Categorized shortcut
+        │       └── Zuma Deluxe.port     <- Port launcher shortcut
         └── Games/
             └── Zuma Deluxe/
-                ├── Zuma             <- Native ARM binary
-                ├── launch.sh
-                ├── main.pak
+                ├── Zuma                 <- Native ARM binary
+                ├── launch.sh            <- Launcher script (0755)
+                ├── launcher.sh          <- Launcher script (0755)
+                ├── main.pak             <- Game asset container
                 ├── libs/
                 │   ├── libSDL2-2.0.so.0
                 │   ├── libSDL2.so
                 │   └── libneonarmmiyoo.so
                 ├── music/
-                │   └── zuma.it
-                └── userdata/
+                │   └── zuma.it          <- Converted soundtrack
+                ├── userdata/            <- Folder for game saves
+                ├── fonts/
+                ├── images/
+                ├── levels/
+                ├── properties/
+                └── sounds/
 ```
 
 ---

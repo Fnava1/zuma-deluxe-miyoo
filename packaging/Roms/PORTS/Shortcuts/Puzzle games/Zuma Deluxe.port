@@ -16,6 +16,10 @@ PORTDIR="$(dirname "$0")"
 # Search for the game directory dynamically
 if [ -d "$PORTDIR/Games/Zuma Deluxe" ]; then
     GAMEDIR="$PORTDIR/Games/Zuma Deluxe"
+elif [ -d "$PORTDIR/../../Games/Zuma Deluxe" ]; then
+    GAMEDIR="$PORTDIR/../../Games/Zuma Deluxe"
+elif [ -d "$PORTDIR/../Games/Zuma Deluxe" ]; then
+    GAMEDIR="$PORTDIR/../Games/Zuma Deluxe"
 elif [ -d "$PORTDIR/../../Roms/PORTS/Games/Zuma Deluxe" ]; then
     GAMEDIR="$PORTDIR/../../Roms/PORTS/Games/Zuma Deluxe"
 elif [ -d "$PORTDIR/../../ROMS/PORTS/Games/Zuma Deluxe" ]; then
@@ -32,5 +36,11 @@ if [ -f "/mnt/SDCARD/Emu/PORTS/launch_standalone.sh" ]; then
     /mnt/SDCARD/Emu/PORTS/launch_standalone.sh "$GameName" "$GameDir" "$GameExecutable" "$Arguments" "$GameDataFile" "$KillAudioserver" "$PerformanceMode"
 else
     cd "$GAMEDIR"
-    ./launch.sh
+    if [ -f "./launch.sh" ]; then
+        ./launch.sh
+    elif [ -f "./launcher.sh" ]; then
+        ./launcher.sh
+    else
+        ./Zuma
+    fi
 fi

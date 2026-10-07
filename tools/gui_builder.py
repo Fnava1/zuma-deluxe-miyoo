@@ -133,17 +133,18 @@ class ZumaPortLauncherGUI(tk.Tk):
         btn_browse_o = ttk.Button(f_o, text="Browse...", style="Action.TButton", command=self.browse_output)
         btn_browse_o.pack(side=tk.LEFT)
 
-        # Section 3: Build Options
-        sec3 = ttk.LabelFrame(main_frame, text=" 3. Build Options ", padding="10")
+        # Section 3: Engine Mode
+        sec3 = ttk.LabelFrame(main_frame, text=" 3. Port Engine Mode ", padding="10")
         sec3.pack(fill=tk.X, pady=(0, 12))
 
         self.var_docker_build = tk.BooleanVar(value=False)
-        chk_docker = ttk.Checkbutton(
+        lbl_engine_info = ttk.Label(
             sec3,
-            text="Compile engine binary from C++ source code using Docker (Advanced / Developer mode)",
-            variable=self.var_docker_build
+            text="✓ Standalone Mode: Uses the included precompiled engine (bin/Zuma).\n   No Docker, compilers, or pip packages required!",
+            font=("Helvetica", 9),
+            foreground="#2e7d32"
         )
-        chk_docker.pack(anchor=tk.W)
+        lbl_engine_info.pack(anchor=tk.W)
 
         # Section 4: Progress Bar & Status
         sec4 = ttk.Frame(main_frame)

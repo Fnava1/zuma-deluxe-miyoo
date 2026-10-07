@@ -23,7 +23,7 @@ This port runs at a rock-solid **60 FPS**, includes full gamepad and analog stic
   - **R Button**: Rotate clockwise.
 - **Accurate Cursor Hotspot**: Mouse and gamepad cursor coordinates precisely aligned with clickable UI elements and dialog buttons.
 - **Full Soundtrack**: High-fidelity multi-channel audio powered by `libxmp-lite`, playing the iconic soundtrack without CPU overhead.
-- **Dual Launcher Support**: Compatible with both OnionOS **Apps** (`App/ZumaDeluxe`) and OnionOS **Ports Collection** (`Roms/PORTS`).
+- **OnionOS Ports Integration**: Seamlessly integrates with the OnionOS **Ports Collection** (`Roms/PORTS/Games/Zuma Deluxe` with shortcuts in `Roms/PORTS/Shortcuts/Puzzle games/`).
 - **Clean System Integration**: Auto-detects OnionOS CPU clock scaling (`1700 MHz`), isolates `audioserver` during gameplay, and cleans up upon exit.
 
 ---
@@ -81,14 +81,12 @@ The script will:
 1. Verify all required PC folders (`fonts`, `images`, `levels`, `properties`, `sounds`, `music`).
 2. Convert the proprietary soundtrack (`music/zuma.mo3`) to Impulse Tracker format (`music/zuma.it`) using UNMO3.
 3. Pack the loose asset folders into an optimized PopCap container (`main.pak`).
-4. Assemble both OnionOS layouts (`App/` and `Roms/PORTS/`) with the precompiled `Zuma` ARM binary and hardware libraries.
+4. Assemble the OnionOS Ports layout (`Roms/PORTS/`) with the precompiled `Zuma` ARM binary and hardware libraries.
 5. Generate the flash-ready archive: `dist/Zuma_Deluxe_MiyooMini.zip`.
 
 ### Step 2: Copy to MicroSD Card
 - Extract `dist/Zuma_Deluxe_MiyooMini.zip` directly to the **ROOT** of your Miyoo Mini microSD card.
-- Insert the card into your Miyoo Mini and launch **Zuma Deluxe** from:
-  - **Main Menu -> Apps -> Zuma Deluxe**, OR
-  - **Main Menu -> Games -> Expert / Ports -> Zuma Deluxe**.
+- Insert the card into your Miyoo Mini and launch **Zuma Deluxe** from **Games -> Expert / Ports -> Puzzle games -> Zuma Deluxe**.
 
 ---
 
@@ -99,9 +97,8 @@ If you prefer to organize the files manually, see [`INSTALL.md`](INSTALL.md) for
 In brief:
 1. Convert `music/zuma.mo3` to `music/zuma.it` using `unmo3 -y zuma.mo3 zuma.it`.
 2. Copy the folders (`fonts`, `images`, `levels`, `music`, `properties`, `sounds`, `userdata`) and `main.pak` to:
-   - `SDCARD/App/ZumaDeluxe/` (for App view), OR
-   - `SDCARD/Roms/PORTS/Games/Zuma Deluxe/` (for Ports view).
-3. Copy the compiled `Zuma` binary and launcher files from [`packaging/`](packaging/).
+   - `SDCARD/Roms/PORTS/Games/Zuma Deluxe/`.
+3. Copy the compiled `Zuma` binary and launcher files from [`packaging/Roms/PORTS/`](packaging/Roms/PORTS/).
 
 ---
 

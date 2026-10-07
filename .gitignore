@@ -27,16 +27,7 @@ Zuma.exe
 *.pak
 *.mo3
 *.it
-Zuma Deluxe/
-packaging/App/ZumaDeluxe/fonts/
-packaging/App/ZumaDeluxe/images/
-packaging/App/ZumaDeluxe/levels/
-packaging/App/ZumaDeluxe/music/
-packaging/App/ZumaDeluxe/properties/
-packaging/App/ZumaDeluxe/sounds/
-packaging/App/ZumaDeluxe/userdata/
-packaging/App/ZumaDeluxe/main.pak
-packaging/App/ZumaDeluxe/Zuma
+/Zuma Deluxe/
 packaging/Roms/PORTS/Games/Zuma Deluxe/fonts/
 packaging/Roms/PORTS/Games/Zuma Deluxe/images/
 packaging/Roms/PORTS/Games/Zuma Deluxe/levels/
