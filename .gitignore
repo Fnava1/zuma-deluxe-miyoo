@@ -18,9 +18,12 @@ unpacked_assets/
 *.idb
 *.pdb
 
-# Compiled game binaries
+# Compiled game binaries & utilities (downloaded on-demand to avoid antivirus false positives)
 /Zuma
-Zuma.exe
+*.exe
+tools/unmo3
+tools/unmo3.exe
+tools/mo324.zip
 *.elf
 
 # Proprietary Game Assets (Never commit copyrighted PopCap assets)

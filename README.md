@@ -37,8 +37,14 @@
 
 ### Option 1: Graphical Launcher (Easiest)
 Simply run the included graphical port builder:
-- **Windows:** Double-click **`Launcher.bat`** in the root directory.
-- **Linux / macOS:** Run `./Launcher.sh` or `python3 tools/gui_builder.py`.
+- **Windows:** Double-click **`Launcher.py`** (Recommended) or **`Launcher.bat`**.
+- **Linux / macOS:** Run `./Launcher.sh` or `python3 Launcher.py`.
+
+> [!NOTE]
+> **Windows SmartScreen / Antivirus Notice:**
+> When running `.bat` scripts downloaded from the internet, Windows SmartScreen may show an alert (*"Windows protected your PC"*). This is standard Windows behavior for unsigned scripts. Simply click **"More info" -> "Run anyway"**, or launch **`Launcher.py`** directly.
+> 
+> *Note on UNMO3:* The original game audio (`zuma.mo3`) requires conversion to Impulse Tracker format (`zuma.it`). The builder automatically fetches the official decoder directly from [Un4seen Developments](https://www.un4seen.com/mo3.html) on demand, keeping the repository completely free of external `.exe` binaries.
 
 The GUI features:
 - **Folder Pickers:** Select your original PC game folder and your preferred output destination.

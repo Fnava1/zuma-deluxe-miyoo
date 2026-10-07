@@ -43,6 +43,47 @@ def find_unmo3_binary():
             return c
     return None
 
+def ensure_unmo3_binary(log_fn=print):
+    """
+    Finds or automatically downloads the official UNMO3 utility from un4seen.com.
+    Keeps repository 100% clean of PEtite-packed binaries to prevent AV false positives.
+    """
+    existing = find_unmo3_binary()
+    if existing:
+        return existing
+
+    url = "https://www.un4seen.com/files/mo324.zip"
+    target_exe = os.path.join(SCRIPT_DIR, "unmo3.exe" if sys.platform == "win32" else "unmo3")
+
+    log_fn("\nNotice: Original 'zuma.mo3' requires conversion to 'zuma.it'.")
+    log_fn("Downloading official UNMO3 decoder directly from https://www.un4seen.com/ ...")
+    try:
+        import urllib.request
+        import zipfile
+        import io
+
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ZumaPortBuilder/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            zip_bytes = io.BytesIO(response.read())
+            with zipfile.ZipFile(zip_bytes) as z:
+                target_name = "unmo3.exe" if sys.platform == "win32" else "unmo3"
+                for name in z.namelist():
+                    if os.path.basename(name).lower() == target_name.lower():
+                        data = z.read(name)
+                        with open(target_exe, "wb") as f:
+                            f.write(data)
+                        if sys.platform != "win32":
+                            os.chmod(target_exe, 0o755)
+                        log_fn(f"  Acquired UNMO3 successfully: {target_exe}\n")
+                        return target_exe
+    except Exception as e:
+        log_fn(f"  Could not automatically download UNMO3: {e}")
+
+    return None
+
 def convert_music(source_music_dir, dest_music_dir, log_fn=print):
     os.makedirs(dest_music_dir, exist_ok=True)
     target_it = os.path.join(dest_music_dir, "zuma.it")
@@ -60,13 +101,14 @@ def convert_music(source_music_dir, dest_music_dir, log_fn=print):
         log_fn("Warning: Neither 'zuma.it' nor 'zuma.mo3' was found in music folder!")
         return False
 
-    unmo3_bin = find_unmo3_binary()
+    unmo3_bin = ensure_unmo3_binary(log_fn=log_fn)
     if not unmo3_bin:
         log_fn("\n" + "="*70)
-        log_fn("ERROR: 'unmo3' utility not found!")
+        log_fn("NOTICE: 'unmo3' utility required for soundtrack conversion.")
         log_fn("The original game uses 'zuma.mo3' which must be converted to 'zuma.it'.")
-        log_fn("Please download UNMO3 from: https://www.un4seen.com/mo3.html")
-        log_fn(f"Place 'unmo3.exe' (or 'unmo3' on Linux) inside: {SCRIPT_DIR}")
+        log_fn("Please connect to the internet to download automatically, OR:")
+        log_fn("1. Download UNMO3 manually from: https://www.un4seen.com/mo3.html")
+        log_fn(f"2. Place 'unmo3.exe' (or 'unmo3' on Linux) inside: {SCRIPT_DIR}")
         log_fn("="*70 + "\n")
         return False
 

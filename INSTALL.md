@@ -23,8 +23,8 @@ You need a legally purchased copy of Zuma Deluxe for PC. Compatible releases:
 
 ### Option A: Using the Graphical Launcher (Easiest)
 Simply run the included GUI builder:
-- **Windows:** Double-click **`Launcher.bat`** in the repository root.
-- **Linux / macOS:** Run `./Launcher.sh` or `python3 tools/gui_builder.py`.
+- **Windows:** Double-click **`Launcher.py`** (Recommended) or **`Launcher.bat`**.
+- **Linux / macOS:** Run `./Launcher.sh` or `python3 Launcher.py`.
 
 The GUI provides an intuitive interface with:
 - **Game Folder Picker & Auto-detection:** Easily select where Zuma Deluxe is installed.
