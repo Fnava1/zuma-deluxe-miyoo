@@ -2,29 +2,12 @@
 
 [![Platform](https://img.shields.io/badge/Platform-Miyoo%20Mini%20%2F%20Plus-blue.svg)](https://onionui.github.io/)
 [![OS](https://img.shields.io/badge/OS-OnionOS-red.svg)](https://onionui.github.io/)
-[![Performance](https://img.shields.io/badge/Performance-60%20FPS%20Stable-brightgreen.svg)]()
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An optimized, native ARM port of **Zuma Deluxe** for the **Miyoo Mini** and **Miyoo Mini Plus** running **OnionOS**.
-
-This port runs at a rock-solid **60 FPS**, includes full gamepad and analog stick support with sub-pixel aiming, ergonomic shoulder trigger controls, tracker-based background music via `libxmp-lite`, and native integration with OnionOS.
+A port of **Zuma Deluxe** for the **Miyoo Mini**
 
 > **IMPORTANT LEGAL NOTICE:** This repository does **NOT** contain any copyrighted game assets, audio files, textures, or level data. You must provide your own legally owned copy of **Zuma Deluxe for PC** (available on [Steam](https://store.steampowered.com/app/3330/Zuma_Deluxe/), EA App, or original CD-ROM) to play.
-
----
-
-## Features
-
-- **60 FPS Performance**: Optimized ARM Cortex-A7 NEON compilation with hardware texture pools and direct framebuffer presentation via Miyoo Mini's native SDL2 driver.
-- **Precision Aiming**: Analog stick support with calibrated deadzones, velocity curves, and D-Pad digital directional controls.
-- **Ergonomic Frog Rotation**: Shoulder buttons configured for intuitive aiming:
-  - **L Button**: Rotate counter-clockwise.
-  - **R Button**: Rotate clockwise.
-- **Accurate Cursor Hotspot**: Mouse and gamepad cursor coordinates precisely aligned with clickable UI elements and dialog buttons.
-- **Full Soundtrack**: High-fidelity multi-channel audio powered by `libxmp-lite`, playing the iconic soundtrack without CPU overhead.
-- **OnionOS Ports Integration**: Seamlessly integrates with the OnionOS **Ports Collection** (`Roms/PORTS/Games/Zuma Deluxe` with shortcuts in `Roms/PORTS/Shortcuts/Puzzle games/`).
-- **Clean System Integration**: Auto-detects OnionOS CPU clock scaling (`1700 MHz`), isolates `audioserver` during gameplay, and cleans up upon exit.
 
 ---
 
@@ -118,16 +101,6 @@ tools\build_docker.bat
 ```
 
 For full compilation details, CMake flags, and manual toolchain setups, refer to [`BUILDING.md`](BUILDING.md).
-
----
-
-## Performance Tuning Details
-
-This port incorporates several hardware-specific configurations developed for the Ingenic/SigmaStar SSD202D SoC:
-- **CPU Clock**: Governed at 1700 MHz via `/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`.
-- **Texture Pool**: `SDL_MMIYOO_TEXTURE_POOL=1` allocates dedicated video memory pools for instant blits without allocation overhead.
-- **Framerate Unlock**: `SDL_MMIYOO_VSYNC_MODE=off` prevents double-buffering stalls, ensuring steady 60 FPS update cycles.
-- **Sound Isolation**: Temporarily suspends MainUI's `audioserver` to provide exclusive ALSA direct access to SDL2.
 
 ---
 
