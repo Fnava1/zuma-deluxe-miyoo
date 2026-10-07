@@ -53,12 +53,21 @@ This port runs at a rock-solid **60 FPS**, includes full gamepad and analog stic
 
 ## Quick Setup (Recommended)
 
-An automated script [`tools/prepare_assets.py`](tools/prepare_assets.py) is provided to unpack your PC files, convert the soundtrack, and generate a ready-to-flash SD card archive in one command.
+### Option 1: Graphical Launcher (Easiest)
+Simply run the included graphical port builder:
+- **Windows:** Double-click **`Launcher.bat`** in the root directory.
+- **Linux / macOS:** Run `./Launcher.sh` or `python3 tools/gui_builder.py`.
 
-### Step 1: Run the Release Builder
-The retail PC version of Zuma Deluxe ships with loose asset folders (`fonts`, `images`, `levels`, `music`, `properties`, `sounds`) and does not include a `main.pak`. 
+The GUI features:
+- **Folder Pickers:** Select your original PC game folder and your preferred output destination.
+- **Auto-Detection:** Automatically searches standard Steam and PopCap installation paths.
+- **Live Progress Bar:** Tracks music conversion, `main.pak` generation, and archive compression.
+- **One-Click Flash Ready:** Generates `Zuma_Deluxe_MiyooMini.zip` ready to extract to your SD card.
 
-On the Miyoo Mini, reading hundreds of loose files from an SD card causes severe I/O lag. The included release builder automatically converts the soundtrack, bundles the assets into an optimized `main.pak`, and builds the final ZIP:
+---
+
+### Option 2: Command Line Builder
+You can also run the builder directly from your terminal:
 
 ```bash
 # Modo 1 (Rápido): Usar el binario precompilado incluido (sin necesidad de Docker):

@@ -21,13 +21,21 @@ You need a legally purchased copy of Zuma Deluxe for PC. Compatible releases:
 
 ## 2. Automated Release Build (Recommended)
 
-The repository provides an automated builder script [`tools/build_release.py`](tools/build_release.py) that handles soundtrack conversion, `main.pak` generation, binary bundling, and ZIP packaging in a single command.
+### Option A: Using the Graphical Launcher (Easiest)
+Simply run the included GUI builder:
+- **Windows:** Double-click **`Launcher.bat`** in the repository root.
+- **Linux / macOS:** Run `./Launcher.sh` or `python3 tools/gui_builder.py`.
 
-### Running the Builder
+The GUI provides an intuitive interface with:
+- **Game Folder Picker & Auto-detection:** Easily select where Zuma Deluxe is installed.
+- **Destination Folder Picker:** Choose where to save the ready-to-flash ZIP.
+- **Real-time Progress Bar:** Watch the build steps in real-time.
+- **One-click Output Folder Access:** Open the folder containing your finished `Zuma_Deluxe_MiyooMini.zip`.
 
-1. Open your terminal or Command Prompt.
-2. Navigate to the repository root.
-3. Run `tools/build_release.py` pointing to your Zuma Deluxe PC directory:
+---
+
+### Option B: Using the Command Line Builder
+If you prefer using the terminal:
 
 ```bash
 # Modo 1 (Rápido): Usar el binario precompilado (sin Docker, sólo requiere Python):
