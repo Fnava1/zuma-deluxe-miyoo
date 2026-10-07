@@ -105,11 +105,11 @@ For full compilation details, CMake flags, and manual toolchain setups, refer to
 
 ## Credits & Acknowledgements
 
-- **PopCap Games / Electronic Arts**: Creators of the original masterpiece *Zuma Deluxe*.
+- **PopCap Games / Electronic Arts**: Creators of the original *Zuma Deluxe*.
 - **PopCap Games Framework Team**: Original open-source release of SexyAppFramework.
 - **libxmp Team**: High-performance tracker playback library.
 - **Un4seen Developments**: UNMO3 decompression utility.
-- **OnionOS Community**: For developing and maintaining the best retro handheld OS.
+- **OnionOS Community**: For developing and maintaining the OS.
 
 ---
 
