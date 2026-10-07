@@ -229,8 +229,10 @@ void CircleShootApp::Init()
 
 void CircleShootApp::Shutdown()
 {
-    if (!this->mShutdown)
+    static bool sShuttingDown = false;
+    if (!sShuttingDown)
     {
+        sShuttingDown = true;
         CleanupWidgets();
 
         if (this->mMaxTime <= 0)
@@ -1948,7 +1950,7 @@ void CircleShootApp::HandleEvent(SDL_Event *ev)
         {
             SDL_Log("Emergency exit: SELECT + START pressed (controller)");
             mShutdown = true;
-            exit(0);
+            return;
         }
 
         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_GUIDE)
@@ -1980,15 +1982,17 @@ void CircleShootApp::HandleEvent(SDL_Event *ev)
         {
             SDL_Log("Emergency exit: SELECT + START pressed (keyboard)");
             mShutdown = true;
-            exit(0);
+            return;
         }
 
-        if (ev->key.keysym.sym == SDLK_ESCAPE)
+        if (ev->key.keysym.sym == SDLK_ESCAPE ||
+            ev->key.keysym.sym == SDLK_HOME ||
+            ev->key.keysym.sym == SDLK_RALT)
         {
-            SDL_Log("ESCAPE / Menu button pressed");
+            SDL_Log("ESCAPE/HOME/RALT / Menu button pressed");
             if (!mBoard || mBoard->mPauseCount > 0 || mBoard->mDialogCount > 0)
             {
-                SDL_Log("ESCAPE button pressed: exiting Zuma");
+                SDL_Log("Menu button pressed: exiting Zuma");
                 mShutdown = true;
                 return;
             }
@@ -2240,7 +2244,8 @@ void CircleShootApp::HandleEvent(SDL_Event *ev)
                     mWidgetManager->MouseDown((int)mVirtualCursorX, (int)mVirtualCursorY, 1);
                 }
             }
-            else if (ev->key.keysym.sym == SDLK_LALT || ev->key.keysym.sym == SDLK_ESCAPE)
+            else if (ev->key.keysym.sym == SDLK_LALT || ev->key.keysym.sym == SDLK_ESCAPE ||
+                     ev->key.keysym.sym == SDLK_HOME || ev->key.keysym.sym == SDLK_RALT)
             {
                 if (GetDialog(DialogType_Options))
                 {

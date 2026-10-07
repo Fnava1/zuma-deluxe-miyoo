@@ -5700,7 +5700,8 @@ static KeyCode SDLKeyToPopCapKey(SDL_Keycode sym)
 	case SDLK_DOWN: return KEYCODE_DOWN;
 	case SDLK_SPACE: return KEYCODE_SPACE;
 	case SDLK_RETURN: return KEYCODE_RETURN;
-	case SDLK_ESCAPE: return KEYCODE_ESCAPE;
+	case SDLK_ESCAPE:
+	case SDLK_HOME: return KEYCODE_ESCAPE;
 	case SDLK_TAB: return KEYCODE_TAB;
 	case SDLK_BACKSPACE: return KEYCODE_BACK;
 	case SDLK_LCTRL:

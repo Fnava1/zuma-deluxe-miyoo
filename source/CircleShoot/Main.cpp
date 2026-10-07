@@ -447,39 +447,6 @@ extern "C" {
 #include <signal.h>
 #include <execinfo.h>
 
-static void CrashSignalHandler(int sig, siginfo_t *info, void *context)
-{
-    const char msg[] = "\n========================================\nFATAL CRASH DETECTED BY SIGNAL HANDLER\n";
-    write(STDERR_FILENO, msg, sizeof(msg) - 1);
-
-    char buf[128];
-    int len = snprintf(buf, sizeof(buf), "Signal %d at fault address %p\n", sig, info ? info->si_addr : NULL);
-    if (len > 0) write(STDERR_FILENO, buf, len);
-
-    void *array[32];
-    int size = backtrace(array, 32);
-    len = snprintf(buf, sizeof(buf), "Stack frames (%d):\n", size);
-    if (len > 0) write(STDERR_FILENO, buf, len);
-    backtrace_symbols_fd(array, size, STDERR_FILENO);
-
-    const char endmsg[] = "========================================\n";
-    write(STDERR_FILENO, endmsg, sizeof(endmsg) - 1);
-    _exit(1);
-}
-
-static void InstallCrashHandler()
-{
-    struct sigaction sa;
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_sigaction = CrashSignalHandler;
-    sa.sa_flags = SA_SIGINFO;
-    sigaction(SIGSEGV, &sa, NULL);
-    sigaction(SIGBUS, &sa, NULL);
-    sigaction(SIGILL, &sa, NULL);
-    sigaction(SIGFPE, &sa, NULL);
-    sigaction(SIGABRT, &sa, NULL);
-}
-
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/fb.h>
@@ -501,6 +468,56 @@ static void ResetFramebuffer()
         }
         close(fb);
     }
+}
+
+static void CrashSignalHandler(int sig, siginfo_t *info, void *context)
+{
+    ResetFramebuffer();
+
+    const char msg[] = "\n========================================\nFATAL CRASH DETECTED BY SIGNAL HANDLER\n";
+    write(STDERR_FILENO, msg, sizeof(msg) - 1);
+
+    char buf[128];
+    int len = snprintf(buf, sizeof(buf), "Signal %d at fault address %p\n", sig, info ? info->si_addr : NULL);
+    if (len > 0) write(STDERR_FILENO, buf, len);
+
+    void *array[32];
+    int size = backtrace(array, 32);
+    len = snprintf(buf, sizeof(buf), "Stack frames (%d):\n", size);
+    if (len > 0) write(STDERR_FILENO, buf, len);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+
+    const char endmsg[] = "========================================\n";
+    write(STDERR_FILENO, endmsg, sizeof(endmsg) - 1);
+    _exit(1);
+}
+
+static void TermSignalHandler(int sig)
+{
+    (void)sig;
+    if (Sexy::gSexyAppBase)
+    {
+        Sexy::gSexyAppBase->mShutdown = true;
+    }
+}
+
+static void InstallCrashHandler()
+{
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_sigaction = CrashSignalHandler;
+    sa.sa_flags = SA_SIGINFO;
+    sigaction(SIGSEGV, &sa, NULL);
+    sigaction(SIGBUS, &sa, NULL);
+    sigaction(SIGILL, &sa, NULL);
+    sigaction(SIGFPE, &sa, NULL);
+    sigaction(SIGABRT, &sa, NULL);
+
+    struct sigaction sa_term;
+    memset(&sa_term, 0, sizeof(sa_term));
+    sa_term.sa_handler = TermSignalHandler;
+    sigaction(SIGTERM, &sa_term, NULL);
+    sigaction(SIGINT, &sa_term, NULL);
 }
 
 void PlatformInit() 
@@ -541,6 +558,9 @@ int main(int argc, char *argv[])
 
     SDL_Log("Quitting SDL");
     SDL_Quit();
+#ifndef _WIN32
+    ResetFramebuffer();
+#endif
     SDL_Log("Return from main");
     return 0;
 }
