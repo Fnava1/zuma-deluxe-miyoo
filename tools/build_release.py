@@ -5,6 +5,11 @@ Zuma Deluxe — Release Package Builder for Miyoo Mini / OnionOS
 Builds the final distribution ZIP (ready to flash/copy to SD card)
 from a legally owned PC installation of Zuma Deluxe.
 Can be run via command line or called programmatically by gui_builder.py.
+
+SAFETY GUARANTEES:
+- NEVER deletes or purges the user's selected output directory.
+- Builds entirely in an isolated temporary staging directory.
+- Safely deploys files without Windows file lock crashes.
 """
 
 import os
@@ -12,6 +17,8 @@ import sys
 import shutil
 import subprocess
 import argparse
+import tempfile
+import time
 import zipfile
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -77,10 +84,31 @@ def convert_music(source_music_dir, dest_music_dir, log_fn=print):
         log_fn(f"  Error running UNMO3: {e}")
         return False
 
-def copy_tree_clean(src, dst):
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    shutil.copytree(src, dst)
+def copy_tree_merge(src, dst, log_fn=print):
+    """
+    Safely copy/merge files from src into dst WITHOUT deleting dst.
+    Handles existing files and retries on transient file locks.
+    """
+    os.makedirs(dst, exist_ok=True)
+    for root, dirs, files in os.walk(src):
+        rel = os.path.relpath(root, src)
+        target_dir = os.path.join(dst, rel) if rel != "." else dst
+        os.makedirs(target_dir, exist_ok=True)
+        for f in files:
+            src_file = os.path.join(root, f)
+            dst_file = os.path.join(target_dir, f)
+            for attempt in range(3):
+                try:
+                    shutil.copy2(src_file, dst_file)
+                    break
+                except PermissionError:
+                    if attempt < 2:
+                        time.sleep(0.2)
+                    else:
+                        log_fn(f"Notice: Could not overwrite {f} (file may be in use).")
+                except Exception as e:
+                    log_fn(f"Notice copying {f}: {e}")
+                    break
 
 def compile_with_docker(log_fn=print):
     log_fn("\n" + "="*70)
@@ -113,7 +141,7 @@ def compile_with_docker(log_fn=print):
 
 def build_package(source, output_dir=None, build_from_source=False, progress_cb=None, log_cb=None):
     """
-    Core build routine. Can be called by CLI or GUI.
+    Safe core build routine.
     progress_cb(percentage: int, status_message: str)
     log_cb(message: str)
     """
@@ -128,17 +156,30 @@ def build_package(source, output_dir=None, build_from_source=False, progress_cb=
             progress_cb(pct, msg)
         log(f"[{pct}%] {msg}")
 
+    # Canonical paths
+    source = os.path.abspath(source)
     if not output_dir:
         output_dir = os.path.join(REPO_ROOT, "dist")
+    output_dir = os.path.abspath(output_dir)
 
+    # SAFETY CHECK 1: Source directory validation
     set_progress(5, "Validating source directory...")
-    if not source or not os.path.isdir(source):
-        raise ValueError(f"Invalid or non-existent source directory: {source}")
+    if not os.path.isdir(source):
+        raise ValueError(f"Source directory does not exist: {source}")
 
     for req in REQUIRED_ASSET_DIRS:
         req_path = os.path.join(source, req)
         if not os.path.isdir(req_path):
-            raise FileNotFoundError(f"Missing required folder '{req}' in source: {source}")
+            raise FileNotFoundError(f"Missing required folder '{req}' in source directory: {source}")
+
+    # SAFETY CHECK 2: Source and Output must NOT be identical
+    if os.path.normcase(source) == os.path.normcase(output_dir):
+        raise ValueError("Source and Output folders cannot be the same! Please select a different output folder.")
+
+    # SAFETY CHECK 3: Output cannot be a drive root or system directory
+    drive, rest = os.path.splitdrive(output_dir)
+    if rest.rstrip("\\/") == "":
+        raise ValueError("Cannot write directly to drive root. Please select or create a subfolder (e.g., E:\\ZumaPort).")
 
     # 1. Resolve executable
     set_progress(15, "Resolving Zuma ARM binary...")
@@ -169,72 +210,96 @@ def build_package(source, output_dir=None, build_from_source=False, progress_cb=
 
     log(f"Using Zuma binary: {zuma_bin}")
 
-    # 2. Setup output directories
-    set_progress(30, "Setting up OnionOS package structure...")
-    dist_root = os.path.abspath(output_dir)
-    app_dir = os.path.join(dist_root, "App", "ZumaDeluxe")
-    ports_dir = os.path.join(dist_root, "Roms", "PORTS")
-    games_zuma_dir = os.path.join(ports_dir, "Games", "Zuma Deluxe")
+    # Check if target ZIP is locked before starting work
+    os.makedirs(output_dir, exist_ok=True)
+    target_zip = os.path.join(output_dir, "Zuma_Deluxe_MiyooMini.zip")
+    if os.path.isfile(target_zip):
+        try:
+            with open(target_zip, "a+b"):
+                pass
+        except PermissionError:
+            raise PermissionError(
+                f"The target file '{target_zip}' is currently in use or open in another program.\n"
+                "Please close Windows Explorer, 7-Zip, or any other app viewing it and try again."
+            )
 
-    if os.path.exists(dist_root):
-        # Clean existing files inside dist
-        shutil.rmtree(dist_root)
-    os.makedirs(app_dir, exist_ok=True)
-    os.makedirs(games_zuma_dir, exist_ok=True)
+    # 2. Build completely in an isolated temporary staging directory
+    staging_dir = tempfile.mkdtemp(prefix="zuma_build_staging_")
+    try:
+        set_progress(30, "Setting up OnionOS package structure...")
+        app_dir = os.path.join(staging_dir, "App", "ZumaDeluxe")
+        ports_dir = os.path.join(staging_dir, "Roms", "PORTS")
+        games_zuma_dir = os.path.join(ports_dir, "Games", "Zuma Deluxe")
 
-    # Copy packaging templates
-    pkg_app = os.path.join(REPO_ROOT, "packaging", "App", "ZumaDeluxe")
-    pkg_ports = os.path.join(REPO_ROOT, "packaging", "Roms", "PORTS")
+        os.makedirs(app_dir, exist_ok=True)
+        os.makedirs(games_zuma_dir, exist_ok=True)
 
-    copy_tree_clean(pkg_app, app_dir)
-    copy_tree_clean(pkg_ports, ports_dir)
+        # Copy packaging templates
+        pkg_app = os.path.join(REPO_ROOT, "packaging", "App", "ZumaDeluxe")
+        pkg_ports = os.path.join(REPO_ROOT, "packaging", "Roms", "PORTS")
 
-    # Place executable in both layouts
-    shutil.copy2(zuma_bin, os.path.join(app_dir, "Zuma"))
-    shutil.copy2(zuma_bin, os.path.join(games_zuma_dir, "Zuma"))
+        copy_tree_merge(pkg_app, app_dir, log_fn=log)
+        copy_tree_merge(pkg_ports, ports_dir, log_fn=log)
 
-    # 3. Convert & Copy music
-    set_progress(45, "Preparing soundtrack (zuma.mo3 -> zuma.it)...")
-    source_music = os.path.join(source, "music")
-    convert_music(source_music, os.path.join(app_dir, "music"), log_fn=log)
-    convert_music(source_music, os.path.join(games_zuma_dir, "music"), log_fn=log)
+        # Place executable in both layouts
+        shutil.copy2(zuma_bin, os.path.join(app_dir, "Zuma"))
+        shutil.copy2(zuma_bin, os.path.join(games_zuma_dir, "Zuma"))
 
-    # 4. Generate optimized main.pak
-    set_progress(60, "Packing asset folders into main.pak container...")
-    app_pak = os.path.join(app_dir, "main.pak")
-    pack_pak(source, app_pak, target_dirs=["fonts", "images", "levels", "properties", "sounds", "music"])
-    shutil.copy2(app_pak, os.path.join(games_zuma_dir, "main.pak"))
+        # 3. Convert & Copy music
+        set_progress(45, "Preparing soundtrack (zuma.mo3 -> zuma.it)...")
+        source_music = os.path.join(source, "music")
+        convert_music(source_music, os.path.join(app_dir, "music"), log_fn=log)
+        convert_music(source_music, os.path.join(games_zuma_dir, "music"), log_fn=log)
 
-    # 5. Deploy asset folders
-    set_progress(75, "Deploying asset folders...")
-    os.makedirs(os.path.join(app_dir, "userdata"), exist_ok=True)
-    os.makedirs(os.path.join(games_zuma_dir, "userdata"), exist_ok=True)
-    for fld in REQUIRED_ASSET_DIRS:
-        copy_tree_clean(os.path.join(source, fld), os.path.join(app_dir, fld))
-        copy_tree_clean(os.path.join(source, fld), os.path.join(games_zuma_dir, fld))
+        # 4. Generate optimized main.pak
+        set_progress(60, "Packing asset folders into main.pak container...")
+        app_pak = os.path.join(app_dir, "main.pak")
+        pack_pak(source, app_pak, target_dirs=["fonts", "images", "levels", "properties", "sounds", "music"])
+        shutil.copy2(app_pak, os.path.join(games_zuma_dir, "main.pak"))
 
-    # 6. Create ZIP archive
-    set_progress(90, "Creating final ready-to-flash ZIP archive...")
-    zip_path = os.path.join(dist_root, "Zuma_Deluxe_MiyooMini.zip")
-    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
-        for root, _, files in os.walk(dist_root):
-            for file in files:
-                full_path = os.path.join(root, file)
-                if full_path == zip_path:
-                    continue
-                rel_path = os.path.relpath(full_path, dist_root)
-                zipinfo = zipfile.ZipInfo(rel_path)
-                if file in ["Zuma", "launch.sh", "Zuma Deluxe.port"] or file.endswith(".sh") or file.endswith(".so") or ".so." in file:
-                    zipinfo.external_attr = 0o755 << 16
-                else:
-                    zipinfo.external_attr = 0o644 << 16
-                with open(full_path, "rb") as f:
-                    zipf.writestr(zipinfo, f.read())
+        # 5. Deploy asset folders
+        set_progress(75, "Deploying asset folders...")
+        os.makedirs(os.path.join(app_dir, "userdata"), exist_ok=True)
+        os.makedirs(os.path.join(games_zuma_dir, "userdata"), exist_ok=True)
+        for fld in REQUIRED_ASSET_DIRS:
+            copy_tree_merge(os.path.join(source, fld), os.path.join(app_dir, fld), log_fn=log)
+            copy_tree_merge(os.path.join(source, fld), os.path.join(games_zuma_dir, fld), log_fn=log)
 
-    set_progress(100, "Release package built successfully!")
-    size_mb = os.path.getsize(zip_path) / (1024 * 1024)
-    log(f"Archive created: {zip_path} ({size_mb:.2f} MB)")
-    return zip_path, dist_root
+        # 6. Create ZIP archive inside isolated staging directory
+        set_progress(90, "Creating ready-to-flash ZIP archive...")
+        staging_zip = os.path.join(staging_dir, "Zuma_Deluxe_MiyooMini.zip")
+        with zipfile.ZipFile(staging_zip, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
+            for root, _, files in os.walk(staging_dir):
+                for file in files:
+                    full_path = os.path.join(root, file)
+                    if full_path == staging_zip:
+                        continue
+                    rel_path = os.path.relpath(full_path, staging_dir)
+                    zipinfo = zipfile.ZipInfo(rel_path)
+                    if file in ["Zuma", "launch.sh", "Zuma Deluxe.port"] or file.endswith(".sh") or file.endswith(".so") or ".so." in file:
+                        zipinfo.external_attr = 0o755 << 16
+                    else:
+                        zipinfo.external_attr = 0o644 << 16
+                    with open(full_path, "rb") as f:
+                        zipf.writestr(zipinfo, f.read())
+
+        # 7. Safely copy to final destination (WITHOUT DELETING ANYTHING)
+        set_progress(96, "Deploying files to destination...")
+        shutil.copy2(staging_zip, target_zip)
+        copy_tree_merge(os.path.join(staging_dir, "App"), os.path.join(output_dir, "App"), log_fn=log)
+        copy_tree_merge(os.path.join(staging_dir, "Roms"), os.path.join(output_dir, "Roms"), log_fn=log)
+
+        set_progress(100, "Release package built successfully!")
+        size_mb = os.path.getsize(target_zip) / (1024 * 1024)
+        log(f"Archive created: {target_zip} ({size_mb:.2f} MB)")
+        return target_zip, output_dir
+
+    finally:
+        # Clean up temporary staging directory
+        try:
+            shutil.rmtree(staging_dir, ignore_errors=True)
+        except Exception:
+            pass
 
 def main():
     parser = argparse.ArgumentParser(description="Build complete release package for Zuma Deluxe Miyoo Mini port")

@@ -268,6 +268,21 @@ class ZumaPortLauncherGUI(tk.Tk):
             output_dir = os.path.join(REPO_ROOT, "dist")
             self.var_output.set(output_dir)
 
+        # Safety Check: Source and Output must NOT be identical
+        if os.path.normcase(os.path.abspath(source)) == os.path.normcase(os.path.abspath(output_dir)):
+            messagebox.showerror(
+                "Folder Conflict",
+                "Source folder and Output destination cannot be the same directory!\n\n"
+                "Please choose a separate folder for your output (such as the default 'dist' folder)."
+            )
+            return
+
+        # Safety Check: Do not output directly into repository root
+        if os.path.normcase(os.path.abspath(output_dir)) == os.path.normcase(os.path.abspath(REPO_ROOT)):
+            output_dir = os.path.join(REPO_ROOT, "dist")
+            self.var_output.set(output_dir)
+            self.log("Note: Output redirected to 'dist' folder to protect repository source files.")
+
         self.btn_build.config(state=tk.DISABLED)
         self.btn_open_folder.config(state=tk.DISABLED)
         self.prog_bar["value"] = 0
@@ -316,7 +331,14 @@ class ZumaPortLauncherGUI(tk.Tk):
                 self.btn_build.config(state=tk.NORMAL)
                 self.var_status.set("Status: Build failed.")
                 self.log(f"\nERROR: {err}")
-                messagebox.showerror("Build Failed", f"An error occurred while building the port package:\n\n{err}")
+                if "used by another process" in err.lower() or "otro proceso" in err.lower() or "permission denied" in err.lower():
+                    messagebox.showerror(
+                        "File In Use / Archivo en uso",
+                        f"A file or folder in the destination is currently locked by another program:\n\n{err}\n\n"
+                        "Please close any Windows Explorer windows or ZIP viewers open to that folder and try again."
+                    )
+                else:
+                    messagebox.showerror("Build Failed", f"An error occurred while building the port package:\n\n{err}")
 
             self.after(0, _on_error)
 
