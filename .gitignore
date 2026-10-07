@@ -19,7 +19,7 @@ unpacked_assets/
 *.pdb
 
 # Compiled game binaries
-Zuma
+/Zuma
 Zuma.exe
 *.elf
 

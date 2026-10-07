@@ -110,6 +110,16 @@ def copy_tree_merge(src, dst, log_fn=print):
                     log_fn(f"Notice copying {f}: {e}")
                     break
 
+def is_docker_running():
+    """Check if Docker is installed and the daemon is active without printing errors."""
+    if not shutil.which("docker"):
+        return False
+    try:
+        res = subprocess.run(["docker", "info"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=3)
+        return res.returncode == 0
+    except Exception:
+        return False
+
 def compile_with_docker(log_fn=print):
     log_fn("\n" + "="*70)
     log_fn(" Compiling Zuma from C++ source using Docker toolchain...")
@@ -117,6 +127,9 @@ def compile_with_docker(log_fn=print):
     log_fn("="*70 + "\n")
     if not shutil.which("docker"):
         log_fn("Error: Docker is not installed or not in PATH.")
+        return None
+    if not is_docker_running():
+        log_fn("Error: Docker Desktop daemon is not running. Please start Docker Desktop first.")
         return None
     try:
         cmd = [
@@ -187,7 +200,10 @@ def build_package(source, output_dir=None, build_from_source=False, progress_cb=
         os.path.join(REPO_ROOT, "bin", "Zuma"),
         os.path.join(REPO_ROOT, "packaging", "Roms", "PORTS", "Games", "Zuma Deluxe", "Zuma"),
         os.path.join(REPO_ROOT, "build-miyoo", "source", "CircleShoot", "Zuma"),
-        os.path.join(REPO_ROOT, "..", "zuma-portable", "build-miyoo", "source", "CircleShoot", "Zuma")
+        os.path.join(REPO_ROOT, "..", "zuma-deluxe-miyoo", "bin", "Zuma"),
+        os.path.join(REPO_ROOT, "..", "bin", "Zuma"),
+        r"C:\DEV\Zuma\zuma-deluxe-miyoo\bin\Zuma",
+        r"C:\DEV\Zuma\bin\Zuma",
     ]
     zuma_bin = None
 
@@ -195,18 +211,22 @@ def build_package(source, output_dir=None, build_from_source=False, progress_cb=
         set_progress(20, "Compiling binary from source with Docker...")
         zuma_bin = compile_with_docker(log_fn=log)
         if not zuma_bin:
-            raise RuntimeError("Compilation with Docker failed.")
+            raise RuntimeError("Compilation with Docker failed. Please ensure Docker Desktop is running.")
     else:
         for b in bin_candidates:
             if os.path.isfile(b):
                 zuma_bin = b
                 break
         if not zuma_bin:
-            log("No precompiled binary found. Attempting Docker compilation...")
-            set_progress(20, "Compiling binary with Docker...")
-            zuma_bin = compile_with_docker(log_fn=log)
+            if is_docker_running():
+                log("No precompiled binary found in bin/Zuma. Docker is running, attempting compilation...")
+                set_progress(20, "Compiling binary with Docker...")
+                zuma_bin = compile_with_docker(log_fn=log)
             if not zuma_bin:
-                raise FileNotFoundError("Could not find or build 'Zuma' binary. Please build it or place it in bin/Zuma.")
+                raise FileNotFoundError(
+                    "Could not find the precompiled 'bin/Zuma' engine binary in the repository.\n"
+                    "Please ensure 'bin/Zuma' is present, or start Docker Desktop to build it from source."
+                )
 
     log(f"Using Zuma binary: {zuma_bin}")
 
