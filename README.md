@@ -5,7 +5,6 @@
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A port of **Zuma Deluxe** for the **Miyoo Mini**
 
 > **IMPORTANT LEGAL NOTICE:** This repository does **NOT** contain any copyrighted game assets, audio files, textures, or level data. You must provide your own legally owned copy of **Zuma Deluxe for PC** (available on [Steam](https://store.steampowered.com/app/3330/Zuma_Deluxe/), EA App, or original CD-ROM) to play.
 
