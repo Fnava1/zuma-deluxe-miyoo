@@ -5,7 +5,7 @@
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**ORIGINAL MIYOO USERS** THERE'S SOME UNEXPECTED BEHAVIOR ON THE ORIGINAL MIYOO, I RECOMMEND NOT TRYING THIS PORT UNTIL I SOLVED THE ISSUES. THANKS FOR UNDERSTANDING 
+**NO PLUS MIYOO USERS** I DIDN'T TESTED THE PORT ON THE OG MIYOO, IF YOU FIND ANY BUG OR UNEXPECTED BEHAVIOR PLEASE LET ME KNOW
 
 > **IMPORTANT LEGAL NOTICE:** This repository does **NOT** contain any copyrighted game assets, audio files, textures, or level data. You must provide your own legally owned copy of **Zuma Deluxe for PC** (available on [Steam](https://store.steampowered.com/app/3330/Zuma_Deluxe/), EA App, or original CD-ROM) to play.
 
