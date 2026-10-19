@@ -5,8 +5,6 @@
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**NO PLUS MIYOO USERS** I DIDN'T TESTED THE PORT ON THE OG MIYOO, IF YOU FIND ANY BUG OR UNEXPECTED BEHAVIOR PLEASE LET ME KNOW
-
 > **IMPORTANT LEGAL NOTICE:** This repository does **NOT** contain any copyrighted game assets, audio files, textures, or level data. You must provide your own legally owned copy of **Zuma Deluxe for PC** (available on [Steam](https://store.steampowered.com/app/3330/Zuma_Deluxe/), EA App, or original CD-ROM) to play.
 
 ---
@@ -23,14 +21,6 @@
 | **Start** | Pause menu | Confirm |
 | **Select** | Options dialog | — |
 | **Menu Button** | OnionOS GameSwitcher / Home | Home |
-
----
-
-## Requirements
-
-1. A **Miyoo Mini** (v2/v3) or **Miyoo Mini Plus** running **OnionOS v4.x** or newer.
-2. A legitimate copy of **Zuma Deluxe for PC** (Steam, PopCap CD, or EA App).
-3. Python 3.8+ on your computer (for asset preparation).
 
 ---
 
