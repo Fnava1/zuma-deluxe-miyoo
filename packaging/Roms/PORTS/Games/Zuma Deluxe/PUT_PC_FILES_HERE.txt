@@ -1,0 +1,16 @@
+ZUMA DELUXE - MIYOO MINI PORT (ONION OS)
+=========================================
+QUICK INSTALLATION INSTRUCTIONS (ON-DEVICE):
+
+1. Copy the contents of this ZIP package to the root of your microSD card.
+2. Copy and paste the following folders from your original PC game (Steam, GOG, or CD)
+   into this exact folder (Roms/PORTS/Games/Zuma Deluxe/):
+     - fonts/
+     - images/
+     - levels/
+     - properties/
+     - sounds/
+     - music/ (containing zuma.mo3 or zuma.it)
+3. Insert the microSD card into your Miyoo Mini and launch 'Zuma Deluxe' from the Ports menu.
+4. The autonomous on-console installer will run on screen, optimize your assets
+   into 'main.pak' in under 2 seconds, and launch the game automatically!

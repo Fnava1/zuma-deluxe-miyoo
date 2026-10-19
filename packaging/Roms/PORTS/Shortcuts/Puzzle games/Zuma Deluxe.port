@@ -1,33 +1,22 @@
 #!/bin/sh
-# Standalone Ports Script for Zuma Deluxe (OnionOS)
-
 GameName="Zuma Deluxe"
 GameDir="Zuma Deluxe"
 GameExecutable="launch.sh"
-GameDataFile="main.pak"
+GameDataFile="launch.sh"
 KillAudioserver=1
 PerformanceMode=0
 Arguments=""
 
 unset LD_PRELOAD
-
 PORTDIR="$(dirname "$0")"
 
-# Search for the game directory dynamically
+# Dynamic game directory lookup (relative to Shortcuts/Puzzle games or ports root)
 if [ -d "$PORTDIR/Games/Zuma Deluxe" ]; then
     GAMEDIR="$PORTDIR/Games/Zuma Deluxe"
 elif [ -d "$PORTDIR/../../Games/Zuma Deluxe" ]; then
     GAMEDIR="$PORTDIR/../../Games/Zuma Deluxe"
 elif [ -d "$PORTDIR/../Games/Zuma Deluxe" ]; then
     GAMEDIR="$PORTDIR/../Games/Zuma Deluxe"
-elif [ -d "$PORTDIR/../../Roms/PORTS/Games/Zuma Deluxe" ]; then
-    GAMEDIR="$PORTDIR/../../Roms/PORTS/Games/Zuma Deluxe"
-elif [ -d "$PORTDIR/../../ROMS/PORTS/Games/Zuma Deluxe" ]; then
-    GAMEDIR="$PORTDIR/../../ROMS/PORTS/Games/Zuma Deluxe"
-elif [ -d "/mnt/SDCARD/Roms/PORTS/Games/Zuma Deluxe" ]; then
-    GAMEDIR="/mnt/SDCARD/Roms/PORTS/Games/Zuma Deluxe"
-elif [ -d "/mnt/SDCARD/ROMS/PORTS/Games/Zuma Deluxe" ]; then
-    GAMEDIR="/mnt/SDCARD/ROMS/PORTS/Games/Zuma Deluxe"
 else
     GAMEDIR="/mnt/SDCARD/Roms/PORTS/Games/Zuma Deluxe"
 fi

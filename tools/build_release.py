@@ -184,11 +184,16 @@ def compile_with_docker(log_fn=print):
         ret = subprocess.run(cmd)
         if ret.returncode == 0:
             built = os.path.join(REPO_ROOT, "build-miyoo", "source", "CircleShoot", "Zuma")
+            built_setup = os.path.join(REPO_ROOT, "build-miyoo", "source", "Setup", "zuma_setup")
+            if os.path.isfile(built_setup):
+                target_setup = os.path.join(REPO_ROOT, "bin", "zuma_setup")
+                os.makedirs(os.path.dirname(target_setup), exist_ok=True)
+                shutil.copy2(built_setup, target_setup)
             if os.path.isfile(built):
                 target = os.path.join(REPO_ROOT, "bin", "Zuma")
                 os.makedirs(os.path.dirname(target), exist_ok=True)
                 shutil.copy2(built, target)
-                log_fn(f"\nCompilation successful! Binary saved to: {target}\n")
+                log_fn(f"\nCompilation successful! Binaries saved to: bin/\n")
                 return target
     except Exception as e:
         log_fn(f"Error during Docker compilation: {e}")
@@ -316,6 +321,18 @@ def build_package(source, output_dir=None, build_from_source=False, progress_cb=
         # Guarantee ARM executable Zuma is deployed
         shutil.copy2(zuma_bin, os.path.join(games_zuma_dir, "Zuma"))
 
+        # Guarantee ARM executable zuma_setup (autonomous installer) is deployed
+        setup_candidates = [
+            os.path.join(REPO_ROOT, "bin", "zuma_setup"),
+            os.path.join(REPO_ROOT, "packaging", "Roms", "PORTS", "Games", "Zuma Deluxe", "zuma_setup"),
+            os.path.join(REPO_ROOT, "build-miyoo", "source", "Setup", "zuma_setup")
+        ]
+        for sc in setup_candidates:
+            if os.path.isfile(sc):
+                shutil.copy2(sc, os.path.join(games_zuma_dir, "zuma_setup"))
+                log(f"Verified: zuma_setup deployed from {sc}")
+                break
+
         # Guarantee launch.sh and launcher.sh exist in Games/Zuma Deluxe
         launch_src_candidates = [
             os.path.join(pkg_ports, "Games", "Zuma Deluxe", "launch.sh"),
@@ -396,7 +413,7 @@ def build_package(source, output_dir=None, build_from_source=False, progress_cb=
                         continue
                     rel_path = os.path.relpath(full_path, staging_dir)
                     zipinfo = zipfile.ZipInfo(rel_path)
-                    if file in ["Zuma", "launch.sh", "launcher.sh", "Zuma Deluxe.port"] or file.endswith(".sh") or file.endswith(".so") or ".so." in file:
+                    if file in ["Zuma", "zuma_setup", "launch.sh", "launcher.sh", "Zuma Deluxe.port"] or file.endswith(".sh") or file.endswith(".so") or ".so." in file:
                         zipinfo.external_attr = 0o755 << 16
                     else:
                         zipinfo.external_attr = 0o644 << 16

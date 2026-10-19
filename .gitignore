@@ -4,6 +4,7 @@ build-*/
 cmake-build-*/
 bin/*
 !bin/Zuma
+!bin/zuma_setup
 dist/
 output/
 unpacked_assets/
@@ -40,6 +41,7 @@ packaging/Roms/PORTS/Games/Zuma Deluxe/sounds/
 packaging/Roms/PORTS/Games/Zuma Deluxe/userdata/
 packaging/Roms/PORTS/Games/Zuma Deluxe/main.pak
 packaging/Roms/PORTS/Games/Zuma Deluxe/Zuma
+packaging/Roms/PORTS/Games/Zuma Deluxe/zuma_setup
 
 # Archives
 *.zip

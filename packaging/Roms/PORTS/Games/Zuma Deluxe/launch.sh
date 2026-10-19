@@ -61,6 +61,30 @@ export LD_LIBRARY_PATH="$progdir/libs:/config/lib:/customer/lib:/lib:/usr/lib:$L
 # Prevent MainUI preloads from interfering with SDL2
 unset LD_PRELOAD
 
+# -----------------------------------------------------------------------------
+# First-Boot Autonomous Setup & Conversion
+# -----------------------------------------------------------------------------
+# If main.pak or soundtrack is missing, trigger the on-console installer GUI.
+if [ ! -f "main.pak" ] || [ ! -f "music/zuma.it" ]; then
+    # Ensure system compatibility symlinks for libunmo3
+    [ ! -e "$progdir/libs/libc.so" ] && ln -sf /lib/libc.so.6 "$progdir/libs/libc.so" 2>/dev/null
+    [ ! -e "$progdir/libs/libm.so" ] && ln -sf /lib/libm.so.6 "$progdir/libs/libm.so" 2>/dev/null
+
+    if [ -f "./zuma_setup" ]; then
+        chmod +x ./zuma_setup 2>/dev/null
+        ./zuma_setup
+        SETUP_STATUS=$?
+        if [ $SETUP_STATUS -ne 0 ]; then
+            # Setup was cancelled or failed due to missing PC files;
+            # exit cleanly without launching Zuma or leaving a black screen.
+            exit $SETUP_STATUS
+        fi
+    fi
+fi
+
+# Ensure executable permissions
+chmod +x ./Zuma 2>/dev/null
+
 # Run Zuma Deluxe without logging
 ./Zuma > /dev/null 2>&1
 
