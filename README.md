@@ -26,9 +26,9 @@
 
 ## Quick Setup (Recommended)
 
-### Option 1: On-Console Autonomous Installer (Easiest — Zero PC Setup!)
+### Option 1: On-Console Autonomous Installer (Easiest)
 
-You do **not** need Python, scripts, or any asset conversion tools on your PC. You can copy the original PC game folders directly to your microSD card, and the Miyoo Mini will autonomously pack and configure everything on its first launch:
+You can copy the original PC game folders directly to your microSD card, and the Miyoo will autonomously pack and configure everything on its first launch:
 
 1. Download **`Zuma_Deluxe_Port_Standalone.zip`** from the [Releases](https://github.com/Fnava1/zuma-deluxe-miyoo/releases) section.
 2. Extract the ZIP directly to the **ROOT** of your Miyoo Mini microSD card.
