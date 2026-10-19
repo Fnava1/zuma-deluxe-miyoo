@@ -26,8 +26,29 @@
 
 ## Quick Setup (Recommended)
 
-### Option 1: Graphical Launcher (Easiest)
-Simply run the included graphical port builder:
+### Option 1: On-Console Autonomous Installer (Easiest — Zero PC Setup!)
+
+You do **not** need Python, scripts, or any asset conversion tools on your PC. You can copy the original PC game folders directly to your microSD card, and the Miyoo Mini will autonomously pack and configure everything on its first launch:
+
+1. Download **`Zuma_Deluxe_Port_Standalone.zip`** from the [Releases](https://github.com/Fnava1/zuma-deluxe-miyoo/releases) section.
+2. Extract the ZIP directly to the **ROOT** of your Miyoo Mini microSD card.
+3. Open your original PC game folder (e.g. from Steam: `steamapps/common/Zuma Deluxe/`) and copy the loose asset folders directly into:
+   ```text
+   SDCARD/Roms/PORTS/Games/Zuma Deluxe/
+   ```
+   *(Required folders: `fonts/`, `images/`, `levels/`, `properties/`, `sounds/`, and `music/`)*
+4. Insert the microSD card into your Miyoo Mini and launch **Zuma Deluxe** from **Ports -> Puzzle games -> Zuma Deluxe** (or run `~Import ports` to refresh your games list).
+5. **First-boot autonomous setup:**
+   - The native on-console installer (`zuma_setup`) automatically launches with an interactive progress bar on the 640×480 screen.
+   - It packs all 450+ loose asset files into an optimized PopCap container (`main.pak`) in ~1.5 seconds.
+   - It dynamically decodes the soundtrack (`zuma.mo3` -> `zuma.it`) using embedded ARM hard-float `libunmo3`.
+   - The game launches immediately upon completion! All future boots skip setup and launch directly into Zuma Deluxe.
+
+---
+
+### Option 2: Graphical Launcher (PC GUI Builder)
+
+If you prefer to convert and pre-pack your assets on your PC before transferring to your SD card:
 - **Windows:** Double-click **`Launcher.py`** (Recommended) or **`Launcher.bat`**.
 - **Linux / macOS:** Run `./Launcher.sh` or `python3 Launcher.py`.
 
@@ -45,7 +66,7 @@ The GUI features:
 
 ---
 
-### Option 2: Command Line Builder
+### Option 3: Command Line Builder
 You can also run the builder directly from your terminal:
 
 ```bash
@@ -63,9 +84,7 @@ The script will:
 4. Assemble the OnionOS Ports layout (`Roms/PORTS/`) with the precompiled `Zuma` ARM binary and hardware libraries.
 5. Generate the flash-ready archive: `dist/Zuma_Deluxe_MiyooMini.zip`.
 
-### Step 2: Copy to MicroSD Card
-- Extract `dist/Zuma_Deluxe_MiyooMini.zip` directly to the **ROOT** of your Miyoo Mini microSD card.
-- Insert the card into your Miyoo Mini and launch **Zuma Deluxe** from **Games -> Expert / Ports -> Puzzle games -> Zuma Deluxe**.
+Extract `dist/Zuma_Deluxe_MiyooMini.zip` directly to the **ROOT** of your Miyoo Mini microSD card.
 
 ---
 
