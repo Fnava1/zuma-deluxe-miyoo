@@ -275,25 +275,42 @@ void CircleShootApp::UpdateFrames()
         int dir = 0;
         if (mController)
         {
+            int ctlDir = 0;
+            if (SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_DPAD_LEFT) ||
+                SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
+                ctlDir -= 1;
+            if (SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) ||
+                SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
+                ctlDir += 1;
+
             Sint16 ax = SDL_GameControllerGetAxis(mController, SDL_CONTROLLER_AXIS_LEFTX);
             const int STICK_DEADZONE = 8000;
-            if (SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_DPAD_LEFT) ||
-                SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) ||
-                ax < -STICK_DEADZONE)
-                dir = -1;
-            else if (SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) ||
-                     SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER) ||
-                     ax > STICK_DEADZONE)
-                dir = 1;
+            if (ax < -STICK_DEADZONE) ctlDir -= 1;
+            else if (ax > STICK_DEADZONE) ctlDir += 1;
+
+            SDL_Joystick *joy = SDL_GameControllerGetJoystick(mController);
+            if (joy && SDL_JoystickNumHats(joy) > 0)
+            {
+                Uint8 hat = SDL_JoystickGetHat(joy, 0);
+                if (hat & SDL_HAT_LEFT) ctlDir -= 1;
+                if (hat & SDL_HAT_RIGHT) ctlDir += 1;
+            }
+
+            if (ctlDir < 0) dir = -1;
+            else if (ctlDir > 0) dir = 1;
         }
 
         const Uint8 *keyState = SDL_GetKeyboardState(NULL);
         if (keyState && dir == 0)
         {
+            int keyDir = 0;
             if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_E])
-                dir = -1;
-            else if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_T])
-                dir = 1;
+                keyDir -= 1;
+            if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_T])
+                keyDir += 1;
+
+            if (keyDir < 0) dir = -1;
+            else if (keyDir > 0) dir = 1;
         }
 
         if (dir && mBoard->mGun)
@@ -2013,24 +2030,7 @@ void CircleShootApp::HandleEvent(SDL_Event *ev)
 
     if (inGameplay)
     {
-        if (ev->type == SDL_CONTROLLERAXISMOTION)
-        {
-            if (mController)
-            {
-                Sint16 x = SDL_GameControllerGetAxis(mController, SDL_CONTROLLER_AXIS_LEFTX);
-                Sint16 y = SDL_GameControllerGetAxis(mController, SDL_CONTROLLER_AXIS_LEFTY);
-                const int JOYSTICK_DEAD_ZONE = 8000;
-                float dist = sqrtf(y*y + x*x);
-                if (dist > JOYSTICK_DEAD_ZONE)
-                {
-                    float angle = atan2f(-y, x) + (SEXY_PI / 2.0f);
-                    mBoard->mGun->SetAngle(angle);
-                    mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                    mBoard->mRecalcGuide = true;
-                }
-            }
-        }
-        else if (ev->type == SDL_CONTROLLERBUTTONDOWN)
+        if (ev->type == SDL_CONTROLLERBUTTONDOWN)
         {
             if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_START)
             {
@@ -2064,27 +2064,8 @@ void CircleShootApp::HandleEvent(SDL_Event *ev)
             {
                 mBoard->mGun->SwapBullets();
             }
-            else if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT ||
-                     ev->cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)
-            {
-                mBoard->mGun->SetAngle(mBoard->mGun->GetAngle() - 0.08f);
-                mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                mBoard->mRecalcGuide = true;
-            }
-            else if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT ||
-                     ev->cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSHOULDER)
-            {
-                mBoard->mGun->SetAngle(mBoard->mGun->GetAngle() + 0.08f);
-                mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                mBoard->mRecalcGuide = true;
-            }
-            else if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN ||
-                     ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP)
-            {
-                mBoard->mGun->SetAngle(mBoard->mGun->GetAngle() + SEXY_PI);
-                mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                mBoard->mRecalcGuide = true;
-            }
+            // D-Pad Left/Right and L/R shoulder triggers are smoothly handled in UpdateFrames().
+            // D-Pad Up and Down do nothing in gameplay.
         }
         else if (ev->type == SDL_KEYDOWN)
         {
@@ -2119,24 +2100,8 @@ void CircleShootApp::HandleEvent(SDL_Event *ev)
             {
                 mBoard->mGun->SwapBullets();
             }
-            else if (ev->key.keysym.sym == SDLK_LEFT)
-            {
-                mBoard->mGun->SetAngle(mBoard->mGun->GetAngle() - 0.08f);
-                mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                mBoard->mRecalcGuide = true;
-            }
-            else if (ev->key.keysym.sym == SDLK_RIGHT)
-            {
-                mBoard->mGun->SetAngle(mBoard->mGun->GetAngle() + 0.08f);
-                mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                mBoard->mRecalcGuide = true;
-            }
-            else if (ev->key.keysym.sym == SDLK_UP || ev->key.keysym.sym == SDLK_DOWN)
-            {
-                mBoard->mGun->SetAngle(mBoard->mGun->GetAngle() + SEXY_PI);
-                mBoard->DoAccuracy(mBoard->mAccuracyCount > 0);
-                mBoard->mRecalcGuide = true;
-            }
+            // D-Pad Left/Right and L/R shoulder triggers (E/T) are smoothly handled in UpdateFrames().
+            // D-Pad Up and Down do nothing in gameplay.
         }
     }
     else

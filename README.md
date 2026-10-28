@@ -13,11 +13,11 @@
 
 | Button | In-Game Action | Menu / Dialogs |
 | :--- | :--- | :--- |
-| **D-Pad / Analog Stick** | Aim frog | Move cursor |
+| **D-Pad Left / L Shoulder** | Rotate frog counter-clockwise | Move cursor |
+| **D-Pad Right / R Shoulder** | Rotate frog clockwise | Move cursor |
+| **D-Pad Up / Down** | — (Inactive in gameplay) | Move cursor |
 | **A Button** | Shoot ball | Select / Click |
 | **B Button** | Swap ball with frog's next color | Back / Cancel |
-| **L Shoulder** | Rotate frog counter-clockwise | — |
-| **R Shoulder** | Rotate frog clockwise | — |
 | **Start** | Pause menu | Confirm |
 | **Select** | Options dialog | — |
 | **Menu Button** | OnionOS GameSwitcher / Home | Home |
