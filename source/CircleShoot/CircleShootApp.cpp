@@ -278,22 +278,22 @@ void CircleShootApp::UpdateFrames()
             int ctlDir = 0;
             if (SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_DPAD_LEFT) ||
                 SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
-                ctlDir -= 1;
+                ctlDir += 1;
             if (SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) ||
                 SDL_GameControllerGetButton(mController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
-                ctlDir += 1;
+                ctlDir -= 1;
 
             Sint16 ax = SDL_GameControllerGetAxis(mController, SDL_CONTROLLER_AXIS_LEFTX);
             const int STICK_DEADZONE = 8000;
-            if (ax < -STICK_DEADZONE) ctlDir -= 1;
-            else if (ax > STICK_DEADZONE) ctlDir += 1;
+            if (ax < -STICK_DEADZONE) ctlDir += 1;
+            else if (ax > STICK_DEADZONE) ctlDir -= 1;
 
             SDL_Joystick *joy = SDL_GameControllerGetJoystick(mController);
             if (joy && SDL_JoystickNumHats(joy) > 0)
             {
                 Uint8 hat = SDL_JoystickGetHat(joy, 0);
-                if (hat & SDL_HAT_LEFT) ctlDir -= 1;
-                if (hat & SDL_HAT_RIGHT) ctlDir += 1;
+                if (hat & SDL_HAT_LEFT) ctlDir += 1;
+                if (hat & SDL_HAT_RIGHT) ctlDir -= 1;
             }
 
             if (ctlDir < 0) dir = -1;
@@ -305,9 +305,9 @@ void CircleShootApp::UpdateFrames()
         {
             int keyDir = 0;
             if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_E])
-                keyDir -= 1;
-            if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_T])
                 keyDir += 1;
+            if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_T])
+                keyDir -= 1;
 
             if (keyDir < 0) dir = -1;
             else if (keyDir > 0) dir = 1;

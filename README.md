@@ -13,8 +13,8 @@
 
 | Button | In-Game Action | Menu / Dialogs |
 | :--- | :--- | :--- |
-| **D-Pad Left / L Shoulder** | Rotate frog counter-clockwise | Move cursor |
-| **D-Pad Right / R Shoulder** | Rotate frog clockwise | Move cursor |
+| **D-Pad Left / L Shoulder** | Rotate frog clockwise | Move cursor |
+| **D-Pad Right / R Shoulder** | Rotate frog counter-clockwise | Move cursor |
 | **D-Pad Up / Down** | — (Inactive in gameplay) | Move cursor |
 | **A Button** | Shoot ball | Select / Click |
 | **B Button** | Swap ball with frog's next color | Back / Cancel |
