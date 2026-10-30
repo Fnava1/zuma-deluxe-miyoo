@@ -3,8 +3,13 @@ progdir="$(dirname "$0")"
 cd "$progdir"
 
 # Differentiate hardware model: Miyoo Mini Plus vs Miyoo Mini (v1/v2/v3/v4)
+# Multi-tier detection: robust against Wi-Fi being disabled in OnionOS settings
 IS_PLUS=0
-if [ -d /sys/class/net/wlan0 ] || grep -qi "plus" /proc/cmdline 2>/dev/null; then
+if [ -f /tmp/deviceModel ] && [ "$(cat /tmp/deviceModel 2>/dev/null)" = "354" ]; then
+    IS_PLUS=1
+elif [ -f /customer/app/axp_test ]; then
+    IS_PLUS=1
+elif [ -d /sys/class/net/wlan0 ] || grep -qi "plus" /proc/cmdline 2>/dev/null; then
     IS_PLUS=1
 fi
 
@@ -16,6 +21,7 @@ if [ "$IS_PLUS" -eq 1 ]; then
 else
     CPU_FREQ=1300
 fi
+export TARGET_CPU_MHZ="$CPU_FREQ" 
 
 # Apply safe CPU clock using official OnionOS / system tool (adjusts voltage properly)
 if [ -f /usr/trimui/bin/cpuclock ]; then

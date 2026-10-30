@@ -299,16 +299,39 @@ static inline DWORD GetTickCount() {
 }
 
 #include <sched.h>
+#include <time.h>
 
 static inline void Sleep(DWORD dwMilliseconds) {
     if (dwMilliseconds == 0) {
         sched_yield();
         return;
     }
-    struct timespec req;
-    req.tv_sec = dwMilliseconds / 1000;
-    req.tv_nsec = (dwMilliseconds % 1000) * 1000000L;
-    nanosleep(&req, NULL);
+
+    struct timespec startTs;
+    clock_gettime(CLOCK_MONOTONIC, &startTs);
+    uint64_t startUs = (uint64_t)startTs.tv_sec * 1000000ULL + (startTs.tv_nsec / 1000ULL);
+    uint64_t targetUs = startUs + (uint64_t)dwMilliseconds * 1000ULL;
+
+    // On Linux embedded kernels with CONFIG_HZ=100 (10ms tick), nanosleep for < 10ms
+    // will sleep for an entire 10-10.5ms jiffy, causing frame drops and jitter.
+    // We nanosleep only the coarse portion (>= 12ms), and finish sub-jiffy time
+    // with high-precision monotonic clock polling and sched_yield().
+    if (dwMilliseconds >= 12) {
+        struct timespec req;
+        DWORD coarseMs = dwMilliseconds - 10;
+        req.tv_sec = coarseMs / 1000;
+        req.tv_nsec = (coarseMs % 1000) * 1000000L;
+        nanosleep(&req, NULL);
+    }
+
+    while (true) {
+        struct timespec curTs;
+        clock_gettime(CLOCK_MONOTONIC, &curTs);
+        uint64_t curUs = (uint64_t)curTs.tv_sec * 1000000ULL + (curTs.tv_nsec / 1000ULL);
+        if (curUs >= targetUs)
+            break;
+        sched_yield();
+    }
 }
 
 static inline DWORD GetCurrentThreadId() {

@@ -1140,6 +1140,9 @@ void CircleShootApp::SwitchSong(int id)
 
 void CircleShootApp::DoOptionsDialog()
 {
+    if (GetDialog(DialogType_Options) != NULL)
+        return;
+
     if (mBoard != NULL)
     {
         mBoard->Pause(true, true);
@@ -1153,6 +1156,9 @@ void CircleShootApp::DoOptionsDialog()
 
 void CircleShootApp::DoConfirmContinueDialog(const std::string &theVerboseLevelString, const std::string &theDisplayName, int theScore)
 {
+    if (GetDialog(DialogType_ConfirmContinue) != NULL)
+        return;
+
     std::string aScore = Sexy::StrFormat(LS(STRING_ID_SCORE), theVerboseLevelString.c_str(), theDisplayName.c_str(), theScore);
     std::string aText = Sexy::StrFormat("%s\r\n"
                         "\r\n"

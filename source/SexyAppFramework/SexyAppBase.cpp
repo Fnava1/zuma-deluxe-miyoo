@@ -1996,7 +1996,8 @@ bool SexyAppBase::WriteBytesToFile(const std::string& theFileName, const void *t
 	}	
 
 	MkDir(GetFileDir(theFileName));
-	FILE* aFP = fopen(theFileName.c_str(), "w+b");
+	std::string aTempFileName = theFileName + ".tmp";
+	FILE* aFP = fopen(aTempFileName.c_str(), "w+b");
 
 	if (aFP == NULL)
 	{
@@ -2011,8 +2012,39 @@ bool SexyAppBase::WriteBytesToFile(const std::string& theFileName, const void *t
 		return false;
 	}
 
-	fwrite(theData, 1, theDataLen, aFP);
+	size_t written = fwrite(theData, 1, theDataLen, aFP);
+	fflush(aFP);
+#if !defined(_WIN32) || defined(__MINGW32__)
+	fsync(fileno(aFP));
+#endif
 	fclose(aFP);
+
+	if (written != theDataLen)
+	{
+		remove(aTempFileName.c_str());
+		if (mRecordingDemoBuffer)
+		{
+			WriteDemoTimingBlock();
+			mDemoBuffer.WriteNumBits(0, 1);
+			mDemoBuffer.WriteNumBits(DEMO_FILE_WRITE, 5);
+			mDemoBuffer.WriteNumBits(0, 1); // failure
+		}
+		return false;
+	}
+
+#ifdef _WIN32
+	remove(theFileName.c_str());
+#endif
+	if (rename(aTempFileName.c_str(), theFileName.c_str()) != 0)
+	{
+		FILE* aDirectFP = fopen(theFileName.c_str(), "w+b");
+		if (aDirectFP != NULL)
+		{
+			fwrite(theData, 1, theDataLen, aDirectFP);
+			fclose(aDirectFP);
+		}
+		remove(aTempFileName.c_str());
+	}
 
 	if (mRecordingDemoBuffer)
 	{

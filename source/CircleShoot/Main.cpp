@@ -538,9 +538,13 @@ void PlatformInit()
 }
 #endif
 
+#define DEFINE_HARDWARE_WATCHDOG_STATICS
+#include "HardwareWatchdog.h"
+
 int main(int argc, char *argv[])
 {
     PlatformInit();
+    HardwareWatchdog::Start();
     {
         Sexy::CircleShootApp app;
 
@@ -555,6 +559,8 @@ int main(int argc, char *argv[])
         SDL_Log("Shutdown");
         app.Shutdown();
     }
+
+    HardwareWatchdog::Stop();
 
     SDL_Log("Quitting SDL");
     SDL_Quit();
