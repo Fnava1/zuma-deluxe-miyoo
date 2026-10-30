@@ -49,6 +49,18 @@ packaging/Roms/PORTS/Games/Zuma Deluxe/zuma_setup
 *.tar.gz
 *.rar
 
+# AI Assistants, Agent Tooling & Local Metadata
+.gemini/
+.claude/
+.trail/
+.cursor/
+.windsurf/
+.aider*
+scratch/
+AGENTS.md
+GEMINI.md
+CLAUDE.md
+
 # IDE & Editor files
 .vscode/
 .vs/
@@ -56,6 +68,9 @@ packaging/Roms/PORTS/Games/Zuma Deluxe/zuma_setup
 *.user
 *.suo
 CMakeUserPresets.json
+*.swp
+*.swo
+*~
 
 # Operating system files
 .DS_Store
@@ -63,7 +78,11 @@ Thumbs.db
 desktop.ini
 ehthumbs.db
 
-# Python bytecode
+# Python bytecode & environments
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
