@@ -31,9 +31,20 @@ elif [ -f /mnt/SDCARD/.tmp_update/bin/cpuclock ]; then
 fi
 echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null
 
-# Clean up audioserver to prevent conflict with SDL2 MI_AO audio backend
+# Clean up audioserver and wait for /dev/mi_ao release to prevent conflict with SDL2 MI_AO backend
+if [ -f /mnt/SDCARD/.tmp_update/script/stop_audioserver.sh ]; then
+    /mnt/SDCARD/.tmp_update/script/stop_audioserver.sh 2>/dev/null
+fi
 killall -9 audioserver 2>/dev/null
 killall -9 audioserver.mod 2>/dev/null
+killall -9 miniamp 2>/dev/null
+usleep 150000 2>/dev/null || sleep 0.2
+
+# Hardware DAC unmute safeguard for SigmaStar MI_AO (prevents silent DAC bug on v4/MY354)
+if [ -f /proc/mi_modules/mi_ao/mi_ao0 ]; then
+    echo "set_ao_volume 0 0dB" > /proc/mi_modules/mi_ao/mi_ao0 2>/dev/null
+    echo "set_ao_volume 1 0dB" > /proc/mi_modules/mi_ao/mi_ao0 2>/dev/null
+fi
 
 # Cleanup handler executed on normal exit or termination signal
 cleanup() {
@@ -46,7 +57,9 @@ cleanup() {
     fi
 
     # Restore audioserver
-    if [ -f /customer/app/audioserver ]; then
+    if [ -f /mnt/SDCARD/.tmp_update/script/start_audioserver.sh ]; then
+        /mnt/SDCARD/.tmp_update/script/start_audioserver.sh 2>/dev/null &
+    elif [ -f /customer/app/audioserver ]; then
         /customer/app/audioserver &
     fi
 
@@ -60,6 +73,11 @@ export SDL_MMIYOO_TEXTURE_POOL=1
 export SDL_MMIYOO_TEXTURE_POOL_MAX_BYTES=16777216
 export SDL_MMIYOO_VSYNC_MODE=off
 export SDL_HINT_RENDER_SCALE_QUALITY=0
+
+# Audio driver configuration & environment sanitization
+export SDL_AUDIODRIVER=mmiyoo
+unset AUDIODEV
+unset AUDIODRIVER
 
 # Set library path prioritizing local libs then Miyoo Mini hardware libraries
 export LD_LIBRARY_PATH="$progdir/libs:/config/lib:/customer/lib:/lib:/usr/lib:$LD_LIBRARY_PATH"
@@ -91,7 +109,7 @@ fi
 # Ensure executable permissions
 chmod +x ./Zuma 2>/dev/null
 
-# Run Zuma Deluxe without logging
-./Zuma > /dev/null 2>&1
+# Run Zuma Deluxe with passive logging to file
+./Zuma > log.txt 2>&1
 
 exit 0

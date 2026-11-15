@@ -95,16 +95,39 @@ public:
         desired.callback = AudioCallback;
         desired.userdata = this;
 
-        mAudioDevice = SDL_OpenAudioDevice(NULL, 0, &desired, &mAudioSpec, 0);
-        if (mAudioDevice > 0)
+        // Bulletproof audio initialization: ensure audio subsystem is initialized
+        // and retry opening device with backoff to tolerate audioserver release timing.
+        for (int attempt = 1; attempt <= 5; ++attempt)
         {
-            SDL_Log("SDLSoundManager: Audio device opened (%d Hz, %d channels)",
-                mAudioSpec.freq, mAudioSpec.channels);
-            SDL_PauseAudioDevice(mAudioDevice, 0);
-        }
-        else
-        {
-            SDL_Log("SDLSoundManager: Warning - SDL_OpenAudioDevice failed: %s", SDL_GetError());
+            if (!SDL_WasInit(SDL_INIT_AUDIO))
+            {
+                if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
+                {
+                    SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+                        "SDLSoundManager: SDL_InitSubSystem(SDL_INIT_AUDIO) attempt %d failed: %s",
+                        attempt, SDL_GetError());
+                    SDL_Delay(80);
+                    continue;
+                }
+            }
+
+            int allowed_changes = (attempt >= 4) ? (SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_CHANNELS_CHANGE) : 0;
+            mAudioDevice = SDL_OpenAudioDevice(NULL, 0, &desired, &mAudioSpec, allowed_changes);
+            if (mAudioDevice > 0)
+            {
+                SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+                    "SDLSoundManager: Audio device opened successfully on attempt %d (%d Hz, %d channels)",
+                    attempt, mAudioSpec.freq, mAudioSpec.channels);
+                SDL_PauseAudioDevice(mAudioDevice, 0);
+                break;
+            }
+            else
+            {
+                SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,
+                    "SDLSoundManager: SDL_OpenAudioDevice attempt %d failed: %s",
+                    attempt, SDL_GetError());
+                SDL_Delay(100);
+            }
         }
     }
 

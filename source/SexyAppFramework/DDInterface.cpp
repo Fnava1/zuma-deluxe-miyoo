@@ -1562,7 +1562,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	// Try initializing audio, but don't fail if audioserver or device is locked
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
 	{
-		SDL_Log("Warning: SDL_INIT_AUDIO failed: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Warning: Initial SDL_INIT_AUDIO failed: %s (will retry in SDLSoundManager)", SDL_GetError());
 	}
 
 	mWidth = mApp->mWidth;
