@@ -109,7 +109,7 @@ fi
 # Ensure executable permissions
 chmod +x ./Zuma 2>/dev/null
 
-# Run Zuma Deluxe with passive logging to file
-./Zuma > log.txt 2>&1
+# Run Zuma Deluxe without logging
+./Zuma > /dev/null 2>&1
 
 exit 0
